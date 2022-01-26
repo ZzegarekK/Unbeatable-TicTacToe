@@ -1,0 +1,278 @@
+player = False #False if player goes second, True if player goes first
+
+if player != False and player != True:
+    player = True
+
+#setup
+import os
+import time
+def cls(): os.system('clear')
+
+def rgbTXT(r, g, b): return f"\u001b[38;2;{r};{g};{b}m"
+def rgbBG(r, g, b): return f"\u001b[48;2;{r};{g};{b}m"
+BOLD = "\033[1m"; REVERT = "\033[0m"; DEFAULT = BOLD+rgbBG(0,0,0)+rgbTXT(255,0,0)
+
+class marks:
+    a = " "
+    b = " "
+    c = " "
+    d = " "
+    e = " "
+    f = " "
+    g = " "
+    h = " "
+    i = " "
+
+score = {"X": 0, "O": 0, "Tie": 0}
+
+def board():
+    print("===========================================================================\n Score: X (You) = "+str(score["X"])+", O (Me) = "+str(score["O"])+", Ties = "+str(score["Tie"])+"\n===========================================================================\n  a | b | c \n ---+---+---\n  d | e | f \n ---+---+---\n  g | h | i \n===========================================================================")
+
+def trueBoard():
+    print("  "+marks.a+" | "+marks.b+" | "+marks.c+" \n ---+---+---\n  "+marks.d+" | "+marks.e+" | "+marks.f+" \n ---+---+---\n  "+marks.g+" | "+marks.h+" | "+marks.i+" \n===========================================================================")
+
+def colorize(inp): return rgbTXT(255,255,255)+inp+DEFAULT
+
+def findWin():
+    if marks.g == marks.h == marks.i in "XO": marks.g=marks.h=marks.i= colorize(marks.g)
+    elif marks.d == marks.e == marks.f in "XO": marks.d=marks.e=marks.f= colorize(marks.d)
+    elif marks.a == marks.b == marks.c in "XO": marks.a=marks.b=marks.c= colorize(marks.a)
+    
+    elif marks.a == marks.d == marks.g in "XO": marks.a=marks.d=marks.g= colorize(marks.a)
+    elif marks.b == marks.e == marks.h in "XO": marks.b=marks.e=marks.h= colorize(marks.b)
+    elif marks.c == marks.f == marks.i in "XO": marks.c=marks.f=marks.i= colorize(marks.c)
+    
+    elif marks.a == marks.e == marks.i in "XO": marks.a=marks.e=marks.i= colorize(marks.a)
+    elif marks.c == marks.e == marks.g in "XO": marks.c=marks.e=marks.g= colorize(marks.c)
+    
+    print("  "+marks.a+" | "+marks.b+" | "+marks.c+" "+"\n ---+---+---\n  "+marks.d+" | "+marks.e+" | "+marks.f+"  \n ---+---+---\n  "+marks.g+" | "+marks.h+" | "+marks.i+" \n===========================================================================")
+
+def clrWin():
+    cls()
+    board()
+    findWin()
+
+def check(mark):
+    try: getattr(marks, mark)
+    except: return False
+    else:
+        if getattr(marks, mark) == " ": return True
+        else: return None
+
+def clr():
+    print(DEFAULT)
+    cls()
+    board()
+    trueBoard()
+clr()
+
+def checkOpposingWin():
+    if ((marks.a == "X" and marks.c == "X") or (marks.e == "X" and marks.h == "X")) and check("b"): return "b"
+    elif ((marks.g == "X" and marks.i == "X") or (marks.b == "X" and marks.e == "X")) and check("h"): return "h"
+    elif ((marks.a == "X" and marks.g == "X") or (marks.e == "X" and marks.f == "X")) and check("d"): return "d"
+    elif ((marks.c == "X" and marks.i == "X") or (marks.d == "X" and marks.e == "X")) and check("f"): return "f"
+    elif ((marks.d == "X" and marks.f == "X") or (marks.a == "X" and marks.i == "X") or (marks.g == "X" and marks.c == "X") or (marks.b == "X" and marks.h == "X")) and check("e"): return "e"
+    elif ((marks.a == "X" and marks.b == "X") or (marks.f == "X" and marks.i == "X") or (marks.e == "X" and marks.g == "X")) and check("c"): return "c"
+    elif ((marks.b == "X" and marks.c == "X") or (marks.d == "X" and marks.g == "X") or (marks.e == "X" and marks.i == "X")) and check("a"): return "a"
+    elif ((marks.g == "X" and marks.h == "X") or (marks.c == "X" and marks.f == "X") or (marks.a == "X" and marks.e == "X")) and check("i"): return "i"
+    elif ((marks.h == "X" and marks.i == "X") or (marks.a == "X" and marks.d == "X") or (marks.c == "X" and marks.e == "X")) and check("g"): return "g"
+    else: return None
+
+def checkWin():
+    if ((marks.a == "O" and marks.c == "O") or (marks.e == "O" and marks.h == "O")) and check("b"): return "b"
+    elif ((marks.g == "O" and marks.i == "O") or (marks.b == "O" and marks.e == "O")) and check("h"): return "h"
+    elif ((marks.a == "O" and marks.g == "O") or (marks.e == "O" and marks.f == "O")) and check("d"): return "d"
+    elif ((marks.c == "O" and marks.i == "O") or (marks.d == "O" and marks.e == "O")) and check("f"): return "f"
+    elif ((marks.d == "O" and marks.f == "O") or (marks.a == "O" and marks.i == "O") or (marks.g == "O" and marks.c == "O") or (marks.b == "O" and marks.h == "O")) and check("e"): return "e"
+    elif ((marks.a == "O" and marks.b == "O") or (marks.f == "O" and marks.i == "O") or (marks.e == "O" and marks.g == "O")) and check("c"): return "c"
+    elif ((marks.b == "O" and marks.c == "O") or (marks.d == "O" and marks.g == "O") or (marks.e == "O" and marks.i == "O")) and check("a"): return "a"
+    elif ((marks.g == "O" and marks.h == "O") or (marks.c == "O" and marks.f == "O") or (marks.a == "O" and marks.e == "O")) and check("i"): return "i"
+    elif ((marks.h == "O" and marks.i == "O") or (marks.a == "O" and marks.d == "O") or (marks.c == "O" and marks.e == "O")) and check("g"): return "g"
+    else: return None
+
+def move1():
+    if not player:
+        setattr(marks, "a", "O")
+        clr()#######################################################
+        while True:
+            mark = input(" Place your mark at: ")
+            available = check(mark)
+            if available:
+                setattr(marks, mark, "X")
+                clr()
+                return mark
+                break
+            elif available == None: clr(); print(" That space is taken\n===========================================================================")
+            else: clr(); print(" Invalid input\n===========================================================================")
+
+def move2(last1):
+    if not player:
+        if last1 in "bf": setattr(marks, "g", "O")
+        elif last1 in "ceg": setattr(marks, "i", "O")
+        elif last1 in "dhi": setattr(marks, "c", "O")
+        clr()#######################################################
+        while True:
+            mark = input(" Place your mark at: ")
+            available = check(mark)
+            if available:
+                setattr(marks, mark, "X")
+                clr()
+                return mark
+                break
+            elif available == None: clr(); print(" That space is taken\n===========================================================================")
+            else: clr(); print(" Invalid input\n===========================================================================")
+
+def move3(last1, last2):
+    if not player:
+        pathFound = False
+        if checkWin(): setattr(marks, checkWin(), "O"); clr(); return True, False, None
+        elif last1 in "cg" or (last1 in "e" and last2 in "cg"): setattr(marks, checkOpposingWin(), "O")
+        elif (last1 in "bd" and last2 in "bd") or (last1 in "fh" and last2 in "bd"): setattr(marks, "e", "O")
+        elif last1 in "i" and last2 in "b": setattr(marks, "g", "O")
+        
+        if last1 in "e" and last2 in "bdfh": setattr(marks, checkOpposingWin(), "O"); pathFound = True
+        clr()#######################################################
+        while True:
+            mark = input(" Place your mark at: ")
+            available = check(mark)
+            if available:
+                setattr(marks, mark, "X")
+                clr()
+                return False, pathFound, mark
+                break
+            elif available == None: clr(); print(" That space is taken\n===========================================================================")
+            else: clr(); print(" Invalid input\n===========================================================================")
+
+def move4(pathFound):
+    if not player:
+        win = False
+        if pathFound:
+            if checkWin(): setattr(marks, checkWin(), "O"); win = True
+            else:
+                setattr(marks, checkOpposingWin(), "O")
+        else:
+            setattr(marks, checkWin(), "O"); win = True
+        clr()#######################################################
+        if not win:
+            while True:
+                mark = input(" Place your mark at: ")
+                available = check(mark)
+                if available:
+                    setattr(marks, mark, "X")
+                    clr()
+                    break
+                elif available == None: clr(); print(" That space is taken\n===========================================================================")
+                else: clr(); print(" Invalid input\n===========================================================================")
+        return win
+
+def move5():
+    if not player:
+        if checkWin(): setattr(marks, checkWin(), "O"); win = True
+        else: setattr(marks, checkOpposingWin(), "O"); win = None
+    clr(); return win
+
+def game():
+    win = False
+    last1 = move1()
+    last2 = move2(last1)
+    win, pathFound, last3 = move3(last1, last2)
+    if not win:
+        win = move4(pathFound)
+        if not win:
+            win = move5()
+    if win == True: score["O"] += 1
+    elif win == None: score["Tie"] += 1
+    elif win == True: score["X"] += 1
+    clrWin()
+    if win == True: print(" I win\n===========================================================================")
+    elif win == None: print(" Tie\n===========================================================================")
+    elif win == False: print(" You must have messed with the program to win, Good for you\n===========================================================================")
+
+replay = "Y"
+while replay == "Y":
+    game()
+    while True:
+        replay = input("Do you want to play again? (Y/N): ").upper()
+        if len(replay) == 1 and replay in "YN": break
+        clrWin()
+        print(" Invalid input\n===========================================================================")
+    if replay == "N": break
+    marks.a=marks.b=marks.c=marks.d=marks.e=marks.f=marks.g=marks.h=marks.i= " "
+
+
+
+R = 255
+G = 0
+B = 0
+
+Rcount = False
+Gcount = True
+Bcount = False
+
+RcountDown = False
+BcountDown = False
+GcountDown = False
+
+i = 1
+
+Step = 15
+frameDelay = 0.1
+while True:
+    i = i+1
+    if Rcount == True: R = R+Step if R+Step < 256 and Rcount == True else R
+    if RcountDown == True: R = R-Step if R-Step > -1 and RcountDown == True else R
+    if R > 255-Step:
+        Rcount = False
+        BcountDown = True
+        if B < 0+Step:
+            BcountDown = False
+            Gcount = True
+    
+    if Gcount == True: G = G+Step if G+Step < 256 and Gcount == True else G
+    if GcountDown == True: G = G-Step if G-Step > -1 and GcountDown == True else G
+    if G > 255-Step:
+        Gcount = False
+        RcountDown = True
+        if R < 0+Step:
+            RcountDown = False
+            Bcount = True
+    
+    if Bcount == True: B = B+Step if B+Step < 256 and Bcount == True else B
+    if BcountDown == True: B = B-Step if B-Step > -1 and BcountDown == True else B
+    if B > 255-Step:
+        Bcount = False
+        GcountDown = True
+        if G < 0+Step:
+            GcountDown = False
+            Rcount = True
+    
+    cls()
+    
+    print(rgbTXT(R,G,B)+"===========================================================================\n Final Score: X (You) = "+str(score["X"])+", O (Me) = "+str(score["O"])+", Ties = "+str(score["Tie"])+"\n===========================================================================")
+    print(i)
+    print("""\n\n\n\n\n\n\n\n\n\n
+                                     ###
+                                    ## ##
+                                   ##   ##
+                                   ##   ##
+                                    ## ##
+                                     ###
+                                 ##### #####
+                               ###   ###   ###
+                              ##    ## ##    ##
+                              ##   ##   ##   ##
+                               #####     #####
+    
+    
+    
+                              #####       #####
+                             #######     #######
+                            ###   ###   ###   ###
+                            ##          ##
+                            ##   ####   ##   ####
+                            ###    ##   ###    ##
+                             #######     #######
+                              #####       #####
+    """)
+    
+    time.sleep(frameDelay)
