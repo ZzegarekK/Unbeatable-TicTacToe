@@ -26,10 +26,10 @@ class marks:
 score = {"X": 0, "O": 0, "Tie": 0}
 
 def board():
-    print("===========================================================================\n Score: X (You) = "+str(score["X"])+", O (Me) = "+str(score["O"])+", Ties = "+str(score["Tie"])+"\n===========================================================================\n  a | b | c \n ---+---+---\n  d | e | f \n ---+---+---\n  g | h | i \n===========================================================================")
+    print("===============================================================================\n Score: X (You) = "+str(score["X"])+", O (Me) = "+str(score["O"])+", Ties = "+str(score["Tie"])+"\n===============================================================================\n  a | b | c \n ---+---+---\n  d | e | f \n ---+---+---\n  g | h | i \n===============================================================================")
 
 def trueBoard():
-    print("  "+marks.a+" | "+marks.b+" | "+marks.c+" \n ---+---+---\n  "+marks.d+" | "+marks.e+" | "+marks.f+" \n ---+---+---\n  "+marks.g+" | "+marks.h+" | "+marks.i+" \n===========================================================================")
+    print("  "+marks.a+" | "+marks.b+" | "+marks.c+" \n ---+---+---\n  "+marks.d+" | "+marks.e+" | "+marks.f+" \n ---+---+---\n  "+marks.g+" | "+marks.h+" | "+marks.i+" \n===============================================================================")
 
 def colorize(inp): return rgbTXT(255,255,255)+inp+DEFAULT
 
@@ -45,7 +45,7 @@ def findWin():
     elif marks.a == marks.e == marks.i in "XO": marks.a=marks.e=marks.i= colorize(marks.a)
     elif marks.c == marks.e == marks.g in "XO": marks.c=marks.e=marks.g= colorize(marks.c)
     
-    print("  "+marks.a+" | "+marks.b+" | "+marks.c+" "+"\n ---+---+---\n  "+marks.d+" | "+marks.e+" | "+marks.f+"  \n ---+---+---\n  "+marks.g+" | "+marks.h+" | "+marks.i+" \n===========================================================================")
+    print("  "+marks.a+" | "+marks.b+" | "+marks.c+" "+"\n ---+---+---\n  "+marks.d+" | "+marks.e+" | "+marks.f+"  \n ---+---+---\n  "+marks.g+" | "+marks.h+" | "+marks.i+" \n===============================================================================")
 
 def clrWin():
     cls()
@@ -102,8 +102,8 @@ def move1():
                 clr()
                 return mark
                 break
-            elif available == None: clr(); print(" That space is taken\n===========================================================================")
-            else: clr(); print(" Invalid input\n===========================================================================")
+            elif available == None: clr(); print(" That space is taken\n===============================================================================")
+            else: clr(); print(" Invalid input\n===============================================================================")
 
 def move2(last1):
     if not player:
@@ -119,8 +119,8 @@ def move2(last1):
                 clr()
                 return mark
                 break
-            elif available == None: clr(); print(" That space is taken\n===========================================================================")
-            else: clr(); print(" Invalid input\n===========================================================================")
+            elif available == None: clr(); print(" That space is taken\n===============================================================================")
+            else: clr(); print(" Invalid input\n===============================================================================")
 
 def move3(last1, last2):
     if not player:
@@ -140,8 +140,8 @@ def move3(last1, last2):
                 clr()
                 return False, pathFound, mark
                 break
-            elif available == None: clr(); print(" That space is taken\n===========================================================================")
-            else: clr(); print(" Invalid input\n===========================================================================")
+            elif available == None: clr(); print(" That space is taken\n===============================================================================")
+            else: clr(); print(" Invalid input\n===============================================================================")
 
 def move4(pathFound):
     if not player:
@@ -161,8 +161,8 @@ def move4(pathFound):
                     setattr(marks, mark, "X")
                     clr()
                     break
-                elif available == None: clr(); print(" That space is taken\n===========================================================================")
-                else: clr(); print(" Invalid input\n===========================================================================")
+                elif available == None: clr(); print(" That space is taken\n===============================================================================")
+                else: clr(); print(" Invalid input\n===============================================================================")
         return win
 
 def move5():
@@ -184,9 +184,9 @@ def game():
     elif win == None: score["Tie"] += 1
     elif win == True: score["X"] += 1
     clrWin()
-    if win == True: print(" I win\n===========================================================================")
-    elif win == None: print(" Tie\n===========================================================================")
-    elif win == False: print(" You must have messed with the program to win, Good for you\n===========================================================================")
+    if win == True: print(" I win\n===============================================================================")
+    elif win == None: print(" Tie\n===============================================================================")
+    elif win == False: print(" You must have messed with the program to win, Good for you\n===============================================================================")
 
 replay = "Y"
 while replay == "Y":
@@ -195,62 +195,21 @@ while replay == "Y":
         replay = input("Do you want to play again? (Y/N): ").upper()
         if len(replay) == 1 and replay in "YN": break
         clrWin()
-        print(" Invalid input\n===========================================================================")
+        print(" Invalid input\n===============================================================================")
     if replay == "N": break
     marks.a=marks.b=marks.c=marks.d=marks.e=marks.f=marks.g=marks.h=marks.i= " "
 
 
 
-R = 255
-G = 0
-B = 0
+step = 15 # how far the RGB values increase/decrease every frame
+dimBG = 85 # how dark the background will be (divides RGB values by this value)
+frameDelay = 0.1 # delay between frames
 
-Rcount = False
-Gcount = True
-Bcount = False
-
-RcountDown = False
-BcountDown = False
-GcountDown = False
-
-i = 1
-
-Step = 15
-frameDelay = 0.1
-while True:
-    i = i+1
-    if Rcount == True: R = R+Step if R+Step < 256 and Rcount == True else R
-    if RcountDown == True: R = R-Step if R-Step > -1 and RcountDown == True else R
-    if R > 255-Step:
-        Rcount = False
-        BcountDown = True
-        if B < 0+Step:
-            BcountDown = False
-            Gcount = True
-    
-    if Gcount == True: G = G+Step if G+Step < 256 and Gcount == True else G
-    if GcountDown == True: G = G-Step if G-Step > -1 and GcountDown == True else G
-    if G > 255-Step:
-        Gcount = False
-        RcountDown = True
-        if R < 0+Step:
-            RcountDown = False
-            Bcount = True
-    
-    if Bcount == True: B = B+Step if B+Step < 256 and Bcount == True else B
-    if BcountDown == True: B = B-Step if B-Step > -1 and BcountDown == True else B
-    if B > 255-Step:
-        Bcount = False
-        GcountDown = True
-        if G < 0+Step:
-            GcountDown = False
-            Rcount = True
-    
+def colorChange(color, inst):
+    print(rgbBG(round(color["1"]/dimBG), round(color["2"]/dimBG), round(color["0"]/dimBG))+rgbTXT(color["1"],color["2"],color["0"]))
     cls()
-    
-    print(rgbTXT(R,G,B)+"===========================================================================\n Final Score: X (You) = "+str(score["X"])+", O (Me) = "+str(score["O"])+", Ties = "+str(score["Tie"])+"\n===========================================================================")
-    print(i)
-    print("""\n\n\n\n\n\n\n\n\n\n
+    print("===============================================================================\n Final Score: X (You) = "+str(score["X"])+", O (Me) = "+str(score["O"])+", Ties = "+str(score["Tie"])+"   ||   Frames: "+str(inst)+"\n===============================================================================")
+    print("""\n\n\n\n\n\n\n\n\n\n\n
                                      ###
                                     ## ##
                                    ##   ##
@@ -262,9 +221,7 @@ while True:
                               ##    ## ##    ##
                               ##   ##   ##   ##
                                #####     #####
-    
-    
-    
+    \n\n
                               #####       #####
                              #######     #######
                             ###   ###   ###   ###
@@ -273,6 +230,22 @@ while True:
                             ###    ##   ###    ##
                              #######     #######
                               #####       #####
-    """)
-    
+    \n\n\n\n\n\n\n\n\n""")
+
+inst = 1
+while True:
+    color = {"1": 255, "2": 0, "0": 0}
+    for col in range(6):
+        if col%2 == 0:
+            for val in range(0,255,step):
+                color[str(col%3)] = val
+                inst += 1
+                colorChange(color, inst)
+                time.sleep(frameDelay)
+        else:
+            for val in range(255,0,-step):
+                color[str(col%3)] = val
+                inst += 1
+                colorChange(color, inst)
+                time.sleep(frameDelay)
     time.sleep(frameDelay)
