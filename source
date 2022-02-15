@@ -1,9 +1,6 @@
-player = False #False if player goes second, True if player goes first
-
-if player != False and player != True:
-    player = True
-
 #setup
+player = None
+
 import os
 import time
 def cls(): os.system('clear')
@@ -11,6 +8,9 @@ def cls(): os.system('clear')
 def rgbTXT(r, g, b): return f"\u001b[38;2;{r};{g};{b}m"
 def rgbBG(r, g, b): return f"\u001b[48;2;{r};{g};{b}m"
 BOLD = "\033[1m"; REVERT = "\033[0m"; DEFAULT = BOLD+rgbBG(0,0,0)+rgbTXT(255,0,0)
+
+print(DEFAULT)
+cls()
 
 class marks:
     a = " "
@@ -59,12 +59,14 @@ def check(mark):
         if getattr(marks, mark) == " ": return True
         else: return None
 
+def quickCheck(x):
+    if getattr(marks, x) == " ": setattr(marks, x, "O"); return True
+    else: return False
+
 def clr():
-    print(DEFAULT)
     cls()
     board()
     trueBoard()
-clr()
 
 def checkOpposingWin():
     if ((marks.a == "X" and marks.c == "X") or (marks.e == "X" and marks.h == "X")) and check("b"): return "b"
@@ -90,39 +92,72 @@ def checkWin():
     elif ((marks.h == "O" and marks.i == "O") or (marks.a == "O" and marks.d == "O") or (marks.c == "O" and marks.e == "O")) and check("g"): return "g"
     else: return None
 
-def move1():
+def move1(player):
     if not player:
         setattr(marks, "a", "O")
         clr()#######################################################
         while True:
-            mark = input(" Place your mark at: ")
+            mark = input(" Place your mark at: ").lower()
             available = check(mark)
             if available:
                 setattr(marks, mark, "X")
                 clr()
                 return mark
-                break
+            elif available == None: clr(); print(" That space is taken\n===============================================================================")
+            else: clr(); print(" Invalid input\n===============================================================================")
+    else:
+        clr()
+        while True:
+            mark = input(" Place your mark at: ")
+            available = check(mark)
+            if available:
+                setattr(marks, mark, "X")
+                #########################################################################
+                if mark in "abcdfghi": setattr(marks, "e", "O")
+                elif mark in "e": setattr(marks, "a", "O")
+                clr()
+                return mark
             elif available == None: clr(); print(" That space is taken\n===============================================================================")
             else: clr(); print(" Invalid input\n===============================================================================")
 
-def move2(last1):
+def move2(last1, player):
     if not player:
         if last1 in "bf": setattr(marks, "g", "O")
         elif last1 in "ceg": setattr(marks, "i", "O")
         elif last1 in "dhi": setattr(marks, "c", "O")
         clr()#######################################################
         while True:
-            mark = input(" Place your mark at: ")
+            mark = input(" Place your mark at: ").lower()
             available = check(mark)
             if available:
                 setattr(marks, mark, "X")
                 clr()
                 return mark
-                break
+            elif available == None: clr(); print(" That space is taken\n===============================================================================")
+            else: clr(); print(" Invalid input\n===============================================================================")
+    else:
+        while True:
+            mark = input(" Place your mark at: ")
+            available = check(mark)
+            if available:
+                setattr(marks, mark, "X")
+                #########################################################################
+                if checkOpposingWin(): setattr(marks, checkOpposingWin(), "O")
+                
+                elif last1 in "acgi" and mark in "acgi": setattr(marks, "b", "O")
+                elif (last1 in "e") or (last1 in "abfi" and mark in "abfi") or (last1 in "g" and mark in "bf"): setattr(marks, "c", "O")
+                
+                elif (last1 in "a" and mark in "fh") or (last1 in "cfgh" and mark in "cfgh"): setattr(marks, "i", "O")
+                elif (last1 in "c" and mark in "dh") or (last1 in "adhi" and mark in "adhi"): setattr(marks, "g", "O")
+                elif (last1 in "i" and mark in "bd") or (last1 in "bcdg" and mark in "bdcg"): setattr(marks, "a", "O")
+                
+                else: setattr(marks, "a", "O")
+                clr()
+                return mark
             elif available == None: clr(); print(" That space is taken\n===============================================================================")
             else: clr(); print(" Invalid input\n===============================================================================")
 
-def move3(last1, last2):
+def move3(last1, last2, player):
     if not player:
         pathFound = False
         if checkWin(): setattr(marks, checkWin(), "O"); clr(); return True, False, None
@@ -133,17 +168,36 @@ def move3(last1, last2):
         if last1 in "e" and last2 in "bdfh": setattr(marks, checkOpposingWin(), "O"); pathFound = True
         clr()#######################################################
         while True:
-            mark = input(" Place your mark at: ")
+            mark = input(" Place your mark at: ").lower()
             available = check(mark)
             if available:
                 setattr(marks, mark, "X")
                 clr()
                 return False, pathFound, mark
-                break
+            elif available == None: clr(); print(" That space is taken\n===============================================================================")
+            else: clr(); print(" Invalid input\n===============================================================================")
+    else:
+        while True:
+            mark = input(" Place your mark at: ")
+            available = check(mark)
+            if available:
+                setattr(marks, mark, "X")
+                #########################################################################
+                if checkWin(): setattr(marks, checkWin(), "O"); return True, False, mark
+                elif checkOpposingWin(): setattr(marks, checkOpposingWin(), "O")
+                elif last1 in "acgi" and last2 in "acgi" and mark in "bdfh":
+                    if check("b"): setattr(marks, "b", "O")
+                    elif check("d"): setattr(marks, "d", "O")
+                    else: True
+                else:
+                    if check("a"): setattr(marks, "a", "O")
+                    elif check("c"): setattr(marks, "c", "O")
+                clr()
+                return False, False, mark
             elif available == None: clr(); print(" That space is taken\n===============================================================================")
             else: clr(); print(" Invalid input\n===============================================================================")
 
-def move4(pathFound):
+def move4(pathFound, player):
     if not player:
         win = False
         if pathFound:
@@ -155,7 +209,7 @@ def move4(pathFound):
         clr()#######################################################
         if not win:
             while True:
-                mark = input(" Place your mark at: ")
+                mark = input(" Place your mark at: ").lower()
                 available = check(mark)
                 if available:
                     setattr(marks, mark, "X")
@@ -164,22 +218,49 @@ def move4(pathFound):
                 elif available == None: clr(); print(" That space is taken\n===============================================================================")
                 else: clr(); print(" Invalid input\n===============================================================================")
         return win
+    else:
+        while True:
+            mark = input(" Place your mark at: ")
+            available = check(mark)
+            if available:
+                setattr(marks, mark, "X")
+                #########################################################################
+                if checkWin(): setattr(marks, checkWin(), "O"); return True
+                elif checkOpposingWin(): setattr(marks, checkOpposingWin(), "O")
+                else:
+                    for x in "abcdefghi":
+                        if quickCheck(x): break ########################################################### THIS IS BROKEN AND NEEDS TO BE FIXED BECAUSE QUICKCHECK WAS DELETED
+                clr()
+                return None
+            elif available == None: clr(); print(" That space is taken\n===============================================================================")
+            else: clr(); print(" Invalid input\n===============================================================================")
 
-def move5():
+def move5(player):
     if not player:
         if checkWin(): setattr(marks, checkWin(), "O"); win = True
         else: setattr(marks, checkOpposingWin(), "O"); win = None
-    clr(); return win
+        clr(); return win
+    else:
+        while True:
+            mark = input(" Place your mark at: ")
+            available = check(mark)
+            if available:
+                setattr(marks, mark, "X")
+                clr()
+                return None
+            elif available == None: clr(); print(" That space is taken\n===============================================================================")
+            else: clr(); print(" Invalid input\n===============================================================================")
 
 def game():
+    global player
     win = False
-    last1 = move1()
-    last2 = move2(last1)
-    win, pathFound, last3 = move3(last1, last2)
+    last1 = move1(player)
+    last2 = move2(last1, player)
+    win, pathFound, last3 = move3(last1, last2, player)
     if not win:
-        win = move4(pathFound)
+        win = move4(pathFound, player)
         if not win:
-            win = move5()
+            win = move5(player)
     if win == True: score["O"] += 1
     elif win == None: score["Tie"] += 1
     elif win == True: score["X"] += 1
@@ -188,21 +269,58 @@ def game():
     elif win == None: print(" Tie\n===============================================================================")
     elif win == False: print(" You must have messed with the program to win, Good for you\n===============================================================================")
 
-replay = "Y"
-while replay == "Y":
+
+clr()
+while True:
+    swap = input("Do you want to swap who goes first each round? (Y/N): ").upper()
+    if len(swap) == 1 and swap in "YN": break
+    clr()
+    print(" Invalid input\n===============================================================================")
+
+if swap == "N":
+    clr()
+    while True:
+        const = input("Do you want your player selection to go first every round? (Y/N): ").upper()
+        if len(const) == 1 and const in "YN": break
+        clr()
+        print(" Invalid input\n===============================================================================")
+else: const = "/"
+
+clr()
+while True:
+    if swap in "YN" or const in "YN":
+        clr()
+        while True:
+            plr = input("Do you want to go first? (Y/N): ").upper()
+            if plr == "":
+                if player == True: plr = "Y"
+                elif player == False: plr = "N"
+            if len(plr) == 1 and plr in "YN": break
+            clr()
+            print(" Invalid input\n===============================================================================")
+        if plr == "Y": player = True
+        elif plr == "N": player = False
+        
+        if swap == "Y": swap = "."
+        if const == "Y": const = "."; swap = "/"
+    
     game()
     while True:
         replay = input("Do you want to play again? (Y/N): ").upper()
+        if replay == "": replay = "Y"
         if len(replay) == 1 and replay in "YN": break
         clrWin()
         print(" Invalid input\n===============================================================================")
     if replay == "N": break
+    
+    if swap == ".": player = not player
+    
     marks.a=marks.b=marks.c=marks.d=marks.e=marks.f=marks.g=marks.h=marks.i= " "
 
 
 
-step = 15 # how far the RGB values increase/decrease every frame
-dimBG = 85 # how dark the background will be (divides RGB values by this value)
+step = 75 # how far the RGB values increase/decrease every frame
+dimBG = 5 # how dark the background will be (divides RGB values by this value)
 frameDelay = 0.1 # delay between frames
 
 def colorChange(color, inst):
@@ -229,8 +347,7 @@ def colorChange(color, inst):
                             ##   ####   ##   ####
                             ###    ##   ###    ##
                              #######     #######
-                              #####       #####
-    \n\n\n\n\n\n\n\n\n""")
+                              #####       #####""")
 
 inst = 1
 while True:
